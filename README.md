@@ -1,11 +1,9 @@
 ## 📃 INFO
-- FFmpeg build for **Windows/MacOS/Linux**  
+- FFmpeg build for **Linux**  
 - **Build everyday** using latest binaries
 
 ## 🔽 Download Link
 
 |  🖥️ System   | 🚀 Link  |
 |  :----:  | :----:  |
-| Windows | [Link](https://bit.ly/ffmpeg-windows64) |
-| MacOS  | [Link](https://bit.ly/ffmpeg-mac64) |
-| Linux | [Link](https://bit.ly/ffmpeg-linux64) |
+| Linux | [Link]([https://bit.ly/ffmpeg-linux64](https://dl.neuq.de/https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.zip)) |
