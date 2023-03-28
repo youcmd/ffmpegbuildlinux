@@ -60,7 +60,7 @@ jobs:
       - name: Delete Older Release
         uses: dev-drprasad/delete-older-releases@v0.2.0
         with:
-          repo: bolucat/ffmpeg
+          repo: youcmd/ffmpegbuildlinux
           keep_latest: 1
           delete_tags: true
         env:
