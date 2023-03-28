@@ -38,11 +38,11 @@ jobs:
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
-          zip -9 -r ffmpeg-linux.zip ff*
+          7z a -mx9 ffmpeg-linux.7z ff*
           popd || exit 1
           mkdir -p release
           pushd release || exit 1
-          cp -r ../ffmpeg-linux/*.zip .
+          cp -r ../ffmpeg-linux/*.7z .
           popd || exit 1
 
       - name: Release
@@ -55,12 +55,12 @@ jobs:
           draft: false
           prerelease: false
           artifacts: |
-            ./release/*.zip
+            ./release/*.7z
             
       - name: Delete Older Release
         uses: dev-drprasad/delete-older-releases@v0.2.0
         with:
-          repo: bolucat/ffmpeg
+          repo: youcmd/ffmpegbuildlinux
           keep_latest: 1
           delete_tags: true
         env:
