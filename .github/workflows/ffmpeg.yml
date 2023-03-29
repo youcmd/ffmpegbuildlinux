@@ -38,7 +38,7 @@ jobs:
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
-          7z a -mx=9 -mfb=192 -md=384m ffmpeg-linux.7z ff*
+          7z a -mx=9 -mfb=64 -md=128m ffmpeg-linux.7z ff*
           popd || exit 1
           mkdir -p release
           pushd release || exit 1
