@@ -19,6 +19,7 @@ jobs:
         run: |
           echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
           echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+          echo "DATE=$(date +%Y-%m-%d %H:%M)" >> $GITHUB_ENV
         shell: bash
           
       - name: Push Changes
@@ -44,13 +45,19 @@ jobs:
           pushd release || exit 1
           cp -r ../ffmpeg-linux/*.7z .
           popd || exit 1
+          
+          
+      - name: Setup variables
+        run: |
+          echo "DATE=$(date +%Y-%m-%d %H:%M)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Release
         uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: FFmpeg ${{ env.FFMPEG }}
+          name: FFmpeg ${{ env.DATE }}
           tag: ${{ env.VERSION }}
           draft: false
           prerelease: false
