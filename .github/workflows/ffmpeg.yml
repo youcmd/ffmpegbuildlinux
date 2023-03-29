@@ -3,7 +3,7 @@ on:
     paths:
       - '.github/workflows/ffmpeg.yml'
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * 2'
   workflow_dispatch:
 
 name: ffmpeg
@@ -19,7 +19,6 @@ jobs:
         run: |
           echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
           echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
-          echo "DATE=$(date +%Y-%m-%d %H:%M)" >> $GITHUB_ENV
         shell: bash
           
       - name: Push Changes
@@ -49,7 +48,7 @@ jobs:
           
       - name: Setup variables
         run: |
-          echo "DATE=$(date '+%Y-%m-%d %H:%M')" >> $GITHUB_ENV
+          echo "DATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
         shell: bash
 
       - name: Release
