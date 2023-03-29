@@ -1,6 +1,6 @@
 ## 📃 INFO
 - FFmpeg build for **Linux**  
-- **Build everyday** using latest binaries from https://github.com/BtbN/FFmpeg-Builds
+- **Build once everyweek** using latest binaries from https://github.com/BtbN/FFmpeg-Builds
 
 ## 🔽 Download Link
 
