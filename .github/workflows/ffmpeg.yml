@@ -38,11 +38,13 @@ jobs:
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
-          7z a -mx=9 -mfb=192 -md=384m ffmpeg-linux.7z ff*
+          7z a -mx=9 -mfb=192 -md=384m ffmpeg-linux.7z ffmpeg ffprobe ffplay
+          zip -9 -r ffmpeg-linux.zip ffmpeg ffprobe ffplay
           popd || exit 1
           mkdir -p release
           pushd release || exit 1
           cp -r ../ffmpeg-linux/*.7z .
+          cp -r ../ffmpeg-linux/*.zip .
           popd || exit 1
 
       - name: Release
@@ -56,6 +58,7 @@ jobs:
           prerelease: false
           artifacts: |
             ./release/*.7z
+            ./release/*.zip
             
       - name: Delete Older Release
         uses: dev-drprasad/delete-older-releases@v0.2.0
