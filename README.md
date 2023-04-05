@@ -1,3 +1,5 @@
+[![ffmpeg](https://github.com/youcmd/ffmpegbuildlinux/actions/workflows/ffmpeg.yml/badge.svg)](https://github.com/youcmd/ffmpegbuildlinux/actions/workflows/ffmpeg.yml)
+
 ## 📃 INFO
 - FFmpeg build for **Linux**  
 - **Build once a week** using latest binaries from https://github.com/BtbN/FFmpeg-Builds
