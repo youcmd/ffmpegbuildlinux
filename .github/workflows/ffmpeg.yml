@@ -59,7 +59,7 @@ jobs:
             ./release/*.7z
 
       - name: Delete Older Release
-        uses: dev-drprasad/delete-older-releases@v0.2.0
+        uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
           repo: youcmd/ffmpegbuildlinux
           keep_latest: 1
