@@ -32,6 +32,15 @@ jobs:
         run: |
           # For uncompress xz format 
           sudo apt-get install -y xz-utils
+          # Build windows 64 bit GPL
+          mkdir -p ffmpeg-windows
+          pushd ffmpeg-windows || exit 1
+          wget -qO- https://api.github.com/repos/GyanD/codexffmpeg/releases/tags/$(echo $(wget -qO- https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z.ver))  | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".*full_build.7z" | wget -O ffmpeg-windows.7z -i -
+          7z x ffmpeg-windows.7z && rm -rfv ffmpeg-windows.7z
+          mv ffmpeg-*/bin/*.exe .
+          rm -rfv ffmpeg-*
+          7z a -mx=9 -mfb=64 -md=128m ffmpeg-linux.7z ff*.exe
+          popd || exit 1
           # Build linux 64 bit GPL
           mkdir -p ffmpeg-linux
           pushd ffmpeg-linux || exit 1
