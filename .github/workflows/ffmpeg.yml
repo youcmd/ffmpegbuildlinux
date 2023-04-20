@@ -13,13 +13,14 @@ jobs:
     steps:
       
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
 
       - name: Setup variables
+        id: setup_variables
         run: |
-          echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
-          echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
-          echo "DATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
+          echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_OUTPUT
+          echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
+          echo "DATE=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
         shell: bash
           
       - name: Push Changes
@@ -44,7 +45,7 @@ jobs:
           # Build linux 64 bit GPL
           mkdir -p ffmpeg-linux
           pushd ffmpeg-linux || exit 1
-          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ env.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-.*-linux64-gpl.tar.xz" | sort -r | head -1 | wget -O ffmpeg-linux.tar.xz -i -
+          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ steps.setup_variables.outputs.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-.*-linux64-gpl.tar.xz" | sort -r | head -1 | wget -O ffmpeg-linux.tar.xz -i -
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
@@ -61,8 +62,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: FFmpeg ${{ env.DATE }}
-          tag: ${{ env.VERSION }}
+          name: FFmpeg ${{ steps.setup_variables.outputs.DATE }}
+          tag: ${{ steps.setup_variables.outputs.VERSION }}
           draft: false
           prerelease: false
           artifacts: |
