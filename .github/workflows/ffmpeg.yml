@@ -39,7 +39,7 @@ jobs:
           7z x ffmpeg-windows.7z && rm -rfv ffmpeg-windows.7z
           mv ffmpeg-*/bin/*.exe .
           rm -rfv ffmpeg-*
-          7z a -mx=9 -mfb=64 -md=128m ffmpeg-linux.7z ff*.exe
+          7z a -mx=9 -mfb=64 -md=128m ffmpeg-windows.7z ff*.exe
           popd || exit 1
           # Build linux 64 bit GPL
           mkdir -p ffmpeg-linux
