@@ -52,6 +52,7 @@ jobs:
           popd || exit 1
           mkdir -p release
           pushd release || exit 1
+          cp -r ../ffmpeg-windows/*.7z .
           cp -r ../ffmpeg-linux/*.7z .
           popd || exit 1
 
