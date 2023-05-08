@@ -77,3 +77,12 @@ jobs:
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate logs
+        run: |
+          echo "Update On $(date)" >> .github/update.log
+          # Git Commit
+          git config --local user.name "github-action[bot]"
+          git config --local user.email "${{ secrets.EMAIL }}"
+          git add .
+          git commit -am "Update On $(date)"
