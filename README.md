@@ -1,4 +1,5 @@
 [![ffmpeg](https://github.com/youcmd/ffmpegbuildlinux/actions/workflows/ffmpeg.yml/badge.svg)](https://github.com/youcmd/ffmpegbuildlinux/actions/workflows/ffmpeg.yml)
+<a href="https://github.com/youcmd/ffmpegbuildlinux/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/youcmd/ffmpegbuildlinux.svg" ></a>
 
 ## 📃 INFO
 - FFmpeg build for **Linux** & **Windows**  
