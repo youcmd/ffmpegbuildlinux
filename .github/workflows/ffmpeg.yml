@@ -16,12 +16,23 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup variables
-        id: setup_variables
         run: |
-          echo "FFMPEG=$(wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_OUTPUT
-          echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
-          echo "DATE=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
+          FFMPEGG=$(wget -qO- "https://www.gyan.dev/ffmpeg/builds/git-version")
+          FFMPEGB=$(wget -qO- "https://api.github.com/repos/BtbN/FFmpeg-Builds/tags" | grep 'name' | cut -d\" -f4 | head -1)
+          echo "FFMPEGG=$FFMPEGG" >> $GITHUB_ENV
+          echo "FFMPEGB=$FFMPEGB" >> $GITHUB_ENV
+          echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+          echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
         shell: bash
+        
+      - name: Generate logs
+        run: |
+          echo "Update On $(date) [${{ env.FFMPEGG }}][${{ env.FFMPEGB }}]" >> .github/update.log
+          # Git Commit
+          git config --local user.name "github-action[bot]"
+          git config --local user.email "${{ secrets.EMAIL }}"
+          git add .
+          git commit -am "Update On ${{ env.VERSION }}"
           
       - name: Push Changes
         uses: ad-m/github-push-action@master
@@ -36,7 +47,7 @@ jobs:
           # Build windows 64 bit GPL
           mkdir -p ffmpeg-windows
           pushd ffmpeg-windows || exit 1
-          wget -qO- https://api.github.com/repos/GyanD/codexffmpeg/releases/tags/$(echo $(wget -qO- https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z.ver))  | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".*full_build.7z" | wget -O ffmpeg-windows.7z -i -
+          wget -qO- "https://api.github.com/repos/GyanD/codexffmpeg/releases/tags/$FFMPEGG"  | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".*full_build.7z" | wget -O ffmpeg-windows.7z -i -
           7z x ffmpeg-windows.7z && rm -rfv ffmpeg-windows.7z
           mv ffmpeg-*/bin/*.exe .
           rm -rfv ffmpeg-*
@@ -45,7 +56,7 @@ jobs:
           # Build linux 64 bit GPL
           mkdir -p ffmpeg-linux
           pushd ffmpeg-linux || exit 1
-          wget -qO- https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/${{ steps.setup_variables.outputs.FFMPEG }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-.*-linux64-gpl.tar.xz" | sort -r | head -1 | wget -O ffmpeg-linux.tar.xz -i -
+          wget -qO- "https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/$FFMPEGB" | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | grep -E ".ffmpeg-.*-linux64-gpl.tar.xz" | sort -r | head -1 | wget -O ffmpeg-linux.tar.xz -i -
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
@@ -59,11 +70,10 @@ jobs:
 
       - name: Release
         uses: ncipollo/release-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: FFmpeg ${{ steps.setup_variables.outputs.DATE }}
-          tag: ${{ steps.setup_variables.outputs.VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: FFmpeg ${{ env.DATE }}
+          tag: ${{ env.VERSION }}
           draft: false
           prerelease: false
           artifacts: |
