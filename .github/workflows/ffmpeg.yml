@@ -14,6 +14,11 @@ jobs:
       
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Install dependencies
+        run: |
+          # For uncompress xz format 
+          sudo apt-get install -y xz-utils
 
       - name: Setup variables
         id: setup_variables
@@ -22,17 +27,9 @@ jobs:
           echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
           echo "DATE=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
         shell: bash
-          
-      - name: Push Changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
 
-      - name: Start build
+      - name: windows 64 bit GPL
         run: |
-          # For uncompress xz format 
-          sudo apt-get install -y xz-utils
           # Build windows 64 bit GPL
           mkdir -p ffmpeg-windows
           pushd ffmpeg-windows || exit 1
@@ -42,6 +39,9 @@ jobs:
           rm -rfv ffmpeg-*
           7z a -mx=9 -mfb=64 -md=128m ffmpeg-windows.7z ff*.exe
           popd || exit 1
+
+      - name: linux 64 bit GPL git
+        run: |
           # Build linux 64 bit GPL git
           mkdir -p ffmpeg-linux
           pushd ffmpeg-linux || exit 1
@@ -51,6 +51,9 @@ jobs:
           rm -rfv ffmpeg-*
           7z a -mx=9 -mfb=64 -md=128m ffmpeg-linux.7z ff*
           popd || exit 1
+
+      - name: linux 64 bit GPL Release
+        run: |
           # Build linux 64 bit GPL Release
           mkdir -p ffmpeg-linux-release
           pushd ffmpeg-linux-release || exit 1
@@ -60,6 +63,9 @@ jobs:
           rm -rfv ffmpeg-*
           7z a -mx=9 -mfb=64 -md=128m ffmpeg-linux-release.7z ff*
           popd || exit 1
+
+      - name: Setup realese
+        run: |
           mkdir -p release
           pushd release || exit 1
           cp -r ../ffmpeg-windows/*.7z .
@@ -80,6 +86,7 @@ jobs:
             ./release/*.7z
 
       - name: Delete Older Release
+        if: github.ref == 'refs/heads/main'
         uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
           repo: youcmd/ffmpegbuildlinux
