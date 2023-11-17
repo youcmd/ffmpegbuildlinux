@@ -3,12 +3,12 @@
 
 ## 📃 INFO
 - FFmpeg build for **Linux** & **Windows**  
-- **Build once a week** using latest binaries from https://github.com/BtbN/FFmpeg-Builds and https://github.com/GyanD/codexffmpeg plus https://johnvansickle.com/ffmpeg/
+- **Build once a week** using latest binaries from https://github.com/BtbN/FFmpeg-Builds and https://github.com/GyanD/codexffmpeg and https://johnvansickle.com/ffmpeg/ for release version
 
 ## 🔽 Download Link
 
 |  🖥️ System   | 🚀 Link  |
 |  :----:  | :----:  |
-| Linux git | [Link](https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z) |
-| Linux Release | [Link](https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux-release.7z) |
+| Linux | [Link](https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z) |
+| Linux | [Link](https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux-release.7z) |
 | Windows | [Link](https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-windows.7z) |
