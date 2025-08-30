@@ -9,7 +9,7 @@ on:
 name: ffmpeg
 jobs:
   build:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     steps:
       
       - name: Checkout
