@@ -58,7 +58,7 @@ jobs:
           # Build linux 64 bit GPL Release
           mkdir -p ffmpeg-linux-release
           pushd ffmpeg-linux-release || exit 1
-          wget -O ffmpeg-linux-release.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+          wget --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)" -O ffmpeg-linux-release.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
           tar -xJf ffmpeg-linux-release.tar.xz && rm -rfv ffmpeg-linux-release.tar.xz
           mv ffmpeg-*/ff* .
           rm -rfv ffmpeg-*
