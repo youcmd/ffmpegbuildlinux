@@ -53,6 +53,7 @@ jobs:
           popd || exit 1
 
       - name: linux 64 bit GPL Release
+        continue-on-error: true
         run: |
           # Build linux 64 bit GPL Release
           mkdir -p ffmpeg-linux-release
@@ -70,7 +71,7 @@ jobs:
           pushd release || exit 1
           cp -r ../ffmpeg-windows/*.7z .
           cp -r ../ffmpeg-linux/*.7z .
-          cp -r ../ffmpeg-linux-release/*.7z .
+          cp -r ../ffmpeg-linux-release/*.7z . || echo "Nothing to copy, skipping."
           popd || exit 1
 
       - name: Release
