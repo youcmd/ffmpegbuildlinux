@@ -170,7 +170,7 @@ jobs:
           }
 
           # A: 1 GiB
-          benchmark "mx9-md512" -mx=9 -md=1g
+          benchmark "mx9-md1g" -mx=9 -md=1g
           
           # B: 512 MiB
           benchmark "mx9-md512" -mx=9 -md=512m
