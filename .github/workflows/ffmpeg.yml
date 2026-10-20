@@ -14,10 +14,20 @@ jobs:
       
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Check runner resources
+        run: |
+          echo "=== Memory ==="
+          free -h
+
+          echo "=== CPU ==="
+          nproc
+
+          echo "=== Disk space ==="
+          df -h .
         
       - name: Install dependencies
         run: |
-          sudo apt-get install -y xz-utils
+          sudo apt-get install -y xz-utils time
 
       - name: Setup variables
         id: setup_variables
@@ -36,7 +46,7 @@ jobs:
           7z x ffmpeg-windows.7z && rm -rfv ffmpeg-windows.7z
           mv ffmpeg-*/bin/*.exe .
           rm -rfv ffmpeg-*
-          7z a -mx=9 -mfb=64 -md=128m ffmpeg-windows.7z ff*.exe
+          /usr/bin/time -v 7z a -mx=9 -mfb=128 -md=512m ffmpeg-windows.7z ff*.exe
           popd || exit 1
 
       - name: linux 64 bit GPL git
@@ -48,7 +58,7 @@ jobs:
           tar -xJf ffmpeg-linux.tar.xz && rm -rfv ffmpeg-linux.tar.xz
           mv ffmpeg-*/bin/* .
           rm -rfv ffmpeg-*
-          7z a -mx=9 -mfb=64 -md=128m ffmpeg-linux.7z ff*
+          /usr/bin/time -v 7z a -mx=9 -mfb=128 -md=512m ffmpeg-linux.7z ff*
           popd || exit 1
 
       - name: Setup realese
