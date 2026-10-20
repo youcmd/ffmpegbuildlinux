@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y p7zip-full jq wget
+          sudo apt-get install -y p7zip-full jq wget time
 
       - name: Download FFmpeg Windows full build
         shell: bash
@@ -130,7 +130,7 @@ jobs:
 
             start=$(date +%s)
 
-            if ! 7z a -t7z -mfb=128 -ms=on \
+            if ! /usr/bin/time -v 7z a -t7z -mfb=128 -ms=on \
               "$@" "$archive" \
               ffmpeg.exe ffprobe.exe ffplay.exe \
               > "$log" 2>&1; then
