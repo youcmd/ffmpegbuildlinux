@@ -169,17 +169,14 @@ jobs:
             echo "Archive integrity: OK"
           }
 
-          # C: 256 MiB
-          benchmark "mx9-md256" -mx=9 -md=256m
+          # A: 1 GiB
+          benchmark "mx9-md512" -mx=9 -md=1g
           
-          # D: 384 MiB
-          benchmark "mx9-md384" -mx=9 -md=384m
-          
-          # E: 512 MiB
+          # B: 512 MiB
           benchmark "mx9-md512" -mx=9 -md=512m
           
-          # E: 1 GiB
-          benchmark "mx9-md512" -mx=9 -md=1g
+          # C: 256 MiB
+          benchmark "mx9-md256" -mx=9 -md=256m
           
           echo ""
           echo "=========================================="
