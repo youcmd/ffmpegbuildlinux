@@ -169,26 +169,21 @@ jobs:
             echo "Archive integrity: OK"
           }
 
-          # A: High compression, 128 MiB dictionary
-          benchmark "mx7-md128" \
-            -mx=7 -md=128m
-
-          # B: Ultra compression, 64 MiB dictionary
-          benchmark "mx9-md64" \
-            -mx=9 -md=64m
-
-          # C: Ultra compression, 128 MiB dictionary
-          benchmark "mx9-md128" \
-            -mx=9 -md=128m
-
-          # D: Ultra compression, 256 MiB dictionary
-          benchmark "mx9-md256" \
-            -mx=9 -md=256m
-
-          # E: Explicit LZMA2, Ultra, 128 MiB dictionary
-          benchmark "lzma2-md128" \
-            -m0=lzma2 -mx=9 -md=128m
-
+          # B: 64 MiB
+          benchmark "mx9-md64" -mx=9 -md=64m
+          
+          # B: 128 MiB
+          benchmark "mx9-md128" -mx=9 -md=128m
+          
+          # C: 256 MiB
+          benchmark "mx9-md256" -mx=9 -md=256m
+          
+          # D: 384 MiB
+          benchmark "mx9-md384" -mx=9 -md=384m
+          
+          # E: 512 MiB
+          benchmark "mx9-md512" -mx=9 -md=512m
+          
           echo ""
           echo "=========================================="
           echo " Benchmark completed"
