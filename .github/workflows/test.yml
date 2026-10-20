@@ -1,0 +1,201 @@
+name: FFmpeg Compression Benchmark
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    name: Benchmark 7-Zip compression
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full jq wget
+
+      - name: Download FFmpeg Windows full build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p ffmpeg-benchmark
+          cd ffmpeg-benchmark
+
+          VERSION=$(wget -qO- \
+            https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z.ver)
+
+          echo "FFmpeg release: $VERSION"
+
+          DOWNLOAD_URL=$(
+            wget -qO- \
+              "https://api.github.com/repos/GyanD/codexffmpeg/releases/tags/$VERSION" |
+            jq -r '
+              .assets[]
+              | select(.name | endswith("full_build.7z"))
+              | .browser_download_url
+            ' |
+            head -n 1
+          )
+
+          if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
+            echo "ERROR: Could not find the FFmpeg full-build archive."
+            exit 1
+          fi
+
+          echo "Downloading: $DOWNLOAD_URL"
+
+          wget -q --show-progress \
+            -O ffmpeg-source.7z \
+            "$DOWNLOAD_URL"
+
+          echo "Extracting FFmpeg archive..."
+          7z x ffmpeg-source.7z
+
+          echo "Locating executables..."
+
+          find . -type f \
+            \( -name ffmpeg.exe -o \
+               -name ffprobe.exe -o \
+               -name ffplay.exe \) \
+            -exec cp -v {} . \;
+
+          echo "Checking executables..."
+
+          for file in ffmpeg.exe ffprobe.exe ffplay.exe; do
+            if [ ! -s "$file" ]; then
+              echo "ERROR: Missing executable: $file"
+              exit 1
+            fi
+          done
+
+          rm -rf ffmpeg-source.7z
+          find . -mindepth 1 -maxdepth 1 \
+            -type d -exec rm -rf {} +
+
+          echo ""
+          echo "Input files:"
+          ls -lh ffmpeg.exe ffprobe.exe ffplay.exe
+
+      - name: Benchmark compression settings
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cd ffmpeg-benchmark
+
+          # Keep the benchmark output outside the input directory.
+          mkdir -p /tmp/ffmpeg-benchmark-results
+
+          INPUT_BYTES=$(stat -c%s ffmpeg.exe)
+          INPUT_BYTES=$((INPUT_BYTES + $(stat -c%s ffprobe.exe)))
+          INPUT_BYTES=$((INPUT_BYTES + $(stat -c%s ffplay.exe)))
+
+          INPUT_MIB=$(awk -v n="$INPUT_BYTES" \
+            'BEGIN {printf "%.2f", n/1048576}')
+
+          echo "=========================================="
+          echo " FFmpeg 7-Zip Compression Benchmark"
+          echo "=========================================="
+          echo "Input size: ${INPUT_MIB} MiB"
+          echo ""
+
+          printf '%-20s %12s %15s %15s\n' \
+            "Configuration" \
+            "Time (sec)" \
+            "Archive (MiB)" \
+            "Saved (MiB)"
+
+          printf '%s\n' \
+            "---------------------------------------------------------------------"
+
+          benchmark() {
+            local name="$1"
+            shift
+
+            local archive="/tmp/ffmpeg-benchmark-results/${name}.7z"
+            local log="/tmp/ffmpeg-benchmark-results/${name}.log"
+
+            rm -f "$archive"
+
+            echo ""
+            echo "Running: $name"
+            echo "Settings: $*"
+
+            local start end elapsed size saved
+
+            start=$(date +%s)
+
+            if ! 7z a -t7z -mfb=64 -ms=on \
+              "$@" "$archive" \
+              ffmpeg.exe ffprobe.exe ffplay.exe \
+              > "$log" 2>&1; then
+
+              echo "ERROR: Compression failed for $name"
+              cat "$log"
+              return 1
+            fi
+
+            end=$(date +%s)
+            elapsed=$((end - start))
+
+            size=$(stat -c%s "$archive")
+            saved=$((INPUT_BYTES - size))
+
+            local archive_mib saved_mib
+
+            archive_mib=$(awk -v n="$size" \
+              'BEGIN {printf "%.2f", n/1048576}')
+
+            saved_mib=$(awk -v n="$saved" \
+              'BEGIN {printf "%.2f", n/1048576}')
+
+            printf '%-20s %12d %15s %15s\n' \
+              "$name" "$elapsed" "$archive_mib" "$saved_mib"
+
+            echo "Archive: $archive"
+            echo "Elapsed: ${elapsed} seconds"
+
+            # Verify that the archive can be tested successfully.
+            if ! 7z t "$archive" > /dev/null; then
+              echo "ERROR: Archive verification failed for $name"
+              return 1
+            fi
+
+            echo "Archive integrity: OK"
+          }
+
+          # A: High compression, 128 MiB dictionary
+          benchmark "mx7-md128" \
+            -mx=7 -md=128m
+
+          # B: Ultra compression, 64 MiB dictionary
+          benchmark "mx9-md64" \
+            -mx=9 -md=64m
+
+          # C: Ultra compression, 128 MiB dictionary
+          benchmark "mx9-md128" \
+            -mx=9 -md=128m
+
+          # D: Ultra compression, 256 MiB dictionary
+          benchmark "mx9-md256" \
+            -mx=9 -md=256m
+
+          # E: Explicit LZMA2, Ultra, 128 MiB dictionary
+          benchmark "lzma2-md128" \
+            -m0=lzma2 -mx=9 -md=128m
+
+          echo ""
+          echo "=========================================="
+          echo " Benchmark completed"
+          echo "=========================================="
+          echo ""
+          echo "Archive sizes:"
+          ls -lh /tmp/ffmpeg-benchmark-results/*.7z
+          echo ""
+          echo "Benchmark logs:"
+          ls -lh /tmp/ffmpeg-benchmark-results/*.log
