@@ -130,7 +130,7 @@ jobs:
 
             start=$(date +%s)
 
-            if ! 7z a -t7z -mfb=128 -ms=on \
+            if ! 7z a -t7z -mfb=273 -ms=on \
               "$@" "$archive" \
               ffmpeg.exe ffprobe.exe ffplay.exe \
               > "$log" 2>&1; then
